@@ -21,12 +21,12 @@ type line = {
 
 // Disable right-click context menu
 document.oncontextmenu = () => false;
-
 canvas.addEventListener('mousedown', onMouseDown);
 canvas.addEventListener('mouseup', onMouseUp);
 canvas.addEventListener('mousemove', onMouseMove);
 canvas.addEventListener('wheel', onMouseWheel);
 
+let undoStack: line[][] = [];
 let leftMouseDown: boolean = false;
 let rightMouseDown: boolean = false;
 let currentStroke: line[] = [];
@@ -36,6 +36,39 @@ let offsetX: number = 0, offsetY: number = 0;
 let scale: number = 1;
 
 
+function undo() {
+    if (drawings.length > 0) {
+        let stroke = drawings.pop();
+        if (stroke){
+            undoStack.push(stroke);
+        }
+        emitDrawingMessages(drawings);
+        redrawCanvas();
+    }
+}
+
+// Redo functionality (Ctrl + Y)
+function redo() {
+    if (undoStack.length > 0) {
+        let stroke = undoStack.pop()
+        if (stroke){
+            drawings.push(stroke);
+        }
+        emitDrawingMessages(drawings);  
+        redrawCanvas();
+    }
+}
+
+document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.key === 'z') {
+        event.preventDefault();
+        undo();
+    }
+    if (event.ctrlKey && event.key === 'y') {
+        event.preventDefault();
+        redo();
+    }
+});
 
 function toScreenX(xTrue: number) : number { 
     return (xTrue + offsetX) * scale; 
@@ -62,7 +95,7 @@ function redrawCanvas() {
 
     canvas.width  = document.body.clientWidth;
     canvas.height = document.body.clientHeight;
-    context.fillStyle = '#fff';
+    context.fillStyle = '#000';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // Redraw all stored strokes
@@ -157,7 +190,7 @@ function drawLine(line: line) {
 }
 
 socket.on('connect', () => {
-    socket.emit('join_room', { room: roomName });
+    socket.emit('join_room', { room: roomName, drawings: drawings });
 });
 
 socket.on('drawing', function(receivedDrawings) {
