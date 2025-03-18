@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build" : "vite build"
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "socket.io-client": "^4.8.1",
+    "sync-request": "^6.1.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.2"
   }

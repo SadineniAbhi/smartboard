@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Room</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        input[type="text"] {
+            padding: 6px;
+            font-size: 14px;
+            width: 180px;
+            border: none;
+            border-radius: 4px;
+            outline: none;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+        }
+        button {
+            padding: 6px 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            background-color: #2c2c2c;
+            color: #f0f0f0;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3b3b3b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form action="http://localhost:5000/config" method="post">
+            <input type="text" placeholder="Room Name" name="roomname" id="roomname" required>
+            <button type="submit" id="join">Join</button>
+        </form>
+        
+    </div>
+</body>
+</html>
