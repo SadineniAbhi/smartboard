@@ -8,24 +8,12 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 drawings_dict = defaultdict(list)
 config_dict = defaultdict(list)
 
-@app.route('/')
-def index():
-    return send_from_directory('templates', 'join.html')
 
-
-@app.route("/main")
+@app.route("/")
 def main():
     return send_from_directory('templates', 'index.html')
 
-@app.route("/config", methods=['POST', 'GET'])
-def config():
-    if request.method == 'POST':
-        roomname = request.form.get('roomname')
-        config_dict['roomName'] = roomname
-        return redirect(url_for('main'))
-    else:
-        if request.method == 'GET':
-            return jsonify(config_dict)
+
 
 @socketio.on('join_room')
 def handle_connections(data):
@@ -34,7 +22,6 @@ def handle_connections(data):
     join_room(room)
     doc = collection.find_one({"room": room})
     room_drawings = doc["drawings"] if doc else []
-    #emit("drawing", drawings_dict[room])
     emit("drawing", room_drawings)
 
 @socketio.on('drawings have been changed')

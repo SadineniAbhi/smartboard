@@ -13,63 +13,31 @@ let scale: number = 1;
 
 type line = { x0: number, y0: number, x1: number, y1: number };
 
-async function getRoomName(url: string): Promise<{ roomName?: string }> {
-    try {
-        const response = await fetch(url);
-        if (!response.ok){
-            throw new Error(`HTTP error! status: ${response.status}`);
-        } 
-        return await response.json();
-    } catch (error) {
-        console.error("Error fetching room name:", error);
-        return {};
-    }
-}
-
-async function initApp() {
-    const config = await getRoomName("http://localhost:5000/config");
-    if (!config.roomName) {
-        console.error("No roomName received from server.");
-        return;
-    }
-    roomName = config.roomName;
+async function initAppWithRoom(room: string) {
+    roomName = room;
     console.log("Using roomName:", roomName);
-
-    // Step 1: Setup socket AFTER getting roomName
-    const socket = io('http://localhost:5000');
-
-    // Step 2: Setup canvas AFTER ready
+    const socket = io('http://192.168.174.174:5000');
     const canvas = document.getElementById("canvas") as HTMLCanvasElement | null;
-    if (!canvas) {
-        throw new Error("Canvas element not found");
-    }
+    if (!canvas) throw new Error("Canvas element not found");
     const context = canvas.getContext("2d");
-    if (!context) {
-        throw new Error("2D context not available");
-    }
-
-    // Step 3: Setup canvas listeners
+    if (!context) throw new Error("2D context not available");
+    canvas.style.display = "block"; // Show canvas after joining room
     setupCanvasListeners(canvas, context, socket);
-
-    // Step 4: Setup socket listeners
     socket.on('connect', () => {
         socket.emit('join_room', { room: roomName, drawings });
     });
-
     socket.on('drawing', (receivedDrawings) => {
         if (Array.isArray(receivedDrawings)) {
             drawings = JSON.parse(JSON.stringify(receivedDrawings));
             redrawCanvas(canvas, context);
         }
     });
-
     socket.on('new connections established', (receivedDrawings) => {
         if (Array.isArray(receivedDrawings)) {
             drawings = JSON.parse(JSON.stringify(receivedDrawings));
             redrawCanvas(canvas, context);
         }
     });
-
     redrawCanvas(canvas, context);
     console.log("App ready, drawing enabled!");
 }
@@ -209,4 +177,14 @@ function toScreenY(yTrue: number): number { return (yTrue + offsetY) * scale; }
 function toTrueX(xScreen: number): number { return (xScreen / scale) - offsetX; }
 function toTrueY(yScreen: number): number { return (yScreen / scale) - offsetY; }
 
-initApp();
+
+const form = document.getElementById("room-form") as HTMLFormElement;
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = document.getElementById("room") as HTMLInputElement;
+    const room = input.value.trim();
+    if (room) {
+        form.style.display = "none"; 
+        initAppWithRoom(room);
+    }
+});
