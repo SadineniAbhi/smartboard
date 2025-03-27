@@ -1,6 +1,5 @@
 import { io, Socket } from "socket.io-client";
 
-// Global variables
 let roomName: string = "";
 let drawings: line[][] = [];
 let undoStack: line[][] = [];
@@ -13,15 +12,15 @@ let scale: number = 1;
 
 type line = { x0: number, y0: number, x1: number, y1: number };
 
-async function initAppWithRoom(room: string) {
+function initAppWithRoom(room: string) {
     roomName = room;
     console.log("Using roomName:", roomName);
-    const socket = io('http://192.168.174.174:5000');
+    const socket = io('http://localhost:5000');
     const canvas = document.getElementById("canvas") as HTMLCanvasElement | null;
     if (!canvas) throw new Error("Canvas element not found");
     const context = canvas.getContext("2d");
     if (!context) throw new Error("2D context not available");
-    canvas.style.display = "block"; // Show canvas after joining room
+    canvas.style.display = "block"; 
     setupCanvasListeners(canvas, context, socket);
     socket.on('connect', () => {
         socket.emit('join_room', { room: roomName, drawings });
@@ -42,7 +41,6 @@ async function initAppWithRoom(room: string) {
     console.log("App ready, drawing enabled!");
 }
 
-// ---- Canvas Event Listeners ----
 function setupCanvasListeners(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, socket: Socket) {
     document.oncontextmenu = () => false;
     canvas.addEventListener('mousedown', onMouseDown);
