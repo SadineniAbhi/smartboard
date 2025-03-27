@@ -15,7 +15,7 @@ type line = { x0: number, y0: number, x1: number, y1: number };
 function initAppWithRoom(room: string) {
     roomName = room;
     console.log("Using roomName:", roomName);
-    const socket = io('http://localhost:5000');
+    const socket = io();
     const canvas = document.getElementById("canvas") as HTMLCanvasElement | null;
     if (!canvas) throw new Error("Canvas element not found");
     const context = canvas.getContext("2d");
