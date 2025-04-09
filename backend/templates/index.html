@@ -2,21 +2,51 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infinite Canvas</title>
-    <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="UTF-8" />
+  <title>SmartBoard</title>
+  <link rel="stylesheet" href="/static/output.css" />
 </head>
 
-<body>
-    <form id="room-form">
-        <div class="form-row">
-            <input type="text" id="room" name="room" placeholder="Enter Room Name" required />
-            <button type="submit">Join</button>
-        </div>
-    </form>
-    
-    <script type="module" src="/static/bundles/main.js"></script>
-    <canvas id="canvas"></canvas>
+<body class="overflow-hidden h-screen">
+  <nav class="bg-black p-2 flex items-center border-b border-gray-700">
+    <div class="flex-1"></div>
+    <div class="flex gap-2">
+      <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-1 rounded-md text-sm" id="undo">
+        ↺
+      </button>
+      <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-1 rounded-md text-sm" id="redo">
+        ↻
+      </button>
+    </div>
+    <div class="flex-1 flex justify-end gap-2">
+      <div class="text-white text-sm mr-4">
+        Created by <a href="https://github.com/SadineniAbhi/smartboard" target="_blank" class="text-green-400 hover:text-green-300">Abhi Sadineni</a>
+      </div>
+      <button id="download" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md text-sm">
+        Download
+      </button>
+      <button onclick="copyShareUrl()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md text-sm">
+        Share
+      </button>
+    </div>
+  </nav>
+  <script>
+    window.userName = "{{ username }}";
+    window.roomName = "{{ roomname }}";
+    window.roomOwner = "{{ roomOwner }}";
+
+    function copyShareUrl() {
+      console.log("hello");
+      const url = `${window.location.origin}/main/${window.roomName}`;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Share URL copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy URL:', err);
+      });
+    }
+  </script>
+  <canvas id="canvas" class="m-0 bg-black w-screen h-[calc(100vh-2.5rem)] overflow-hidden touch-none select-none"></canvas>
+  <script type="module" src="/static/bundles/main.js"></script>
 </body>
-</html> 
+
+</html>

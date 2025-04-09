@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBoard - Join Room</title>
+    <link rel="stylesheet" href="/static/output.css">
+    <style>
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10%;
+        }
+        .form-container {
+            background-color: #111;
+            border: 1px solid #333;
+        }
+        .input-field {
+            background-color: #222;
+            border: 1px solid #333;
+            color: #fff;
+        }
+        .input-field:focus {
+            border-color: #00ff00;
+            outline: none;
+        }
+        .project-description {
+            max-width: 500px;
+            color: #fff;
+        }
+        .project-description h1 {
+            font-size: 3rem;
+            color: #00ff00;
+            margin-bottom: 1rem;
+        }
+        .project-description p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="project-description">
+        <h1>SmartBoard</h1>
+        <p>A collaborative whiteboard application that allows multiple users to draw and interact in real-time. Perfect for remote teams, online education, and creative brainstorming sessions.</p>
+        <p class="mt-4">Features:</p>
+        <ul class="list-disc list-inside mt-2">
+            <li>Real-time collaboration</li>
+            <li>Room-based sharing</li>
+            <li>Download and share capabilities</li>
+            <li> Created by <a href="https://github.com/SadineniAbhi/smartboard" target="_blank" class="text-green-400 hover:text-green-300">Abhi Sadineni</a></li>
+        </ul>
+    </div>
+    <div class="form-container p-8 rounded-lg shadow-lg w-96">
+        <h1 class="text-3xl font-bold text-green-500 mb-6 text-center">Join Room</h1>
+        <form id="joinForm" class="space-y-4" action="/" method="POST">
+            <div>
+                <input type="text" id="username" name="username" required
+                    class="input-field w-full px-4 py-2 rounded focus:ring-2 focus:ring-green-500"
+                    placeholder="UserName">
+            </div>
+            <div>
+                <input type="text" id="roomname" name="roomname" required
+                    class="input-field w-full px-4 py-2 rounded focus:ring-2 focus:ring-green-500"
+                    placeholder="RoomName">
+            </div>
+            <button type="submit"
+                class="w-full bg-green-500 text-black font-bold py-2 px-4 rounded hover:bg-green-600 transition-colors">
+                Join Room
+            </button>
+        </form>
+    </div>
+</body>
+</html>

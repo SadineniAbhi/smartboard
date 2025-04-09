@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBoard - Join Room</title>
+    <link rel="stylesheet" href="/static/output.css">
+    <style>
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .form-container {
+            background-color: #111;
+            border: 1px solid #333;
+        }
+        .input-field {
+            background-color: #222;
+            border: 1px solid #333;
+            color: #fff;
+        }
+        .input-field:focus {
+            border-color: #00ff00;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container p-8 rounded-lg shadow-lg w-96">
+        <h1 class="text-3xl font-bold text-green-500 mb-6 text-center">SmartBoard</h1>
+        <form id="joinForm" class="space-y-4" method="POST">
+            <div>
+                <input type="text" id="username" name="username" required
+                    class="input-field w-full px-4 py-2 rounded focus:ring-2 focus:ring-green-500"
+                    placeholder="UserName">
+            </div>
+            <button type="submit"
+                class="w-full bg-green-500 text-black font-bold py-2 px-4 rounded hover:bg-green-600 transition-colors">
+                Join Room
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

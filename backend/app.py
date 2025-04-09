@@ -1,47 +1,59 @@
-from flask import Flask, send_from_directory, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_socketio import SocketIO, emit, join_room
-from collections import defaultdict
-from db import collection
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 socketio = SocketIO(app, cors_allowed_origins="*")
-drawings_dict = defaultdict(list)
-config_dict = defaultdict(list)
+
+@app.route("/", methods=['GET', 'POST'])
+def landingpage():
+    if request.method == 'POST':
+        username = request.form['username']
+        roomname = request.form['roomname']
+        return redirect(url_for('main', username=username, roomname=roomname, roomOwner="yes"))
+    return render_template('landingpage.html')
+
+@app.route("/main/<username>/<roomname>/<roomOwner>")
+def main(username, roomname, roomOwner):
+    return render_template('index.html', username=username, roomname=roomname, roomOwner=roomOwner)
+
+@app.route("/main/<roomname>", methods=['GET', 'POST'])
+def userregister(roomname):
+    if request.method == 'POST':
+        username = request.form['username']
+        return redirect(url_for('main', username=username, roomname=roomname, roomOwner="no"))
+    return render_template('userregister.html')
 
 
-@app.route("/")
-def main():
-    return send_from_directory('templates', 'index.html')
-
-
-
-@socketio.on('join_room')
-def handle_connections(data):
-    global drawings_dict
-    room = data.get('room')
+@socketio.on('join')
+def on_join(data):
+    room = data['room']
     join_room(room)
-    doc = collection.find_one({"room": room})
-    room_drawings = doc["drawings"] if doc else []
-    emit("drawing", room_drawings)
+    emit('send_all_drawings', to=room)
 
-@socketio.on('drawings have been changed')
+@socketio.on('all_drawings')
+def on_all_drawings(data):
+    room = data['room']
+    drawings = data['drawings']
+    emit('current_drawings', drawings, to=room)
+
+@socketio.on("undo")
+def undo(data):
+    roomName = data['room']
+    emit('undo', data, to=roomName, include_self=False)
+
+@socketio.on("redo")
+def undo(data):
+    roomName = data['room']
+    emit('redo', data, to=roomName, include_self=False)
+
+@socketio.on('new-strokes')
 def handle_drawing(data):
-    global drawings_dict
     room = data.get('room')
-    drawings = data.get('drawings')
-    emit('drawing', drawings, to=room, include_self=False)
-    drawings_dict[room] = drawings.copy()
-    collection.update_one(
-    {"room": room},
-    {"$set": {"drawings": drawings}},
-    upsert=True
-    )
-
-@app.route('/static/<path:filename>')
-def assets(filename):
-    return send_from_directory('static', filename)
-
+    username = data.get('userName')
+    new_strokes = data.get('strokes')
+    emit('strokes', {'user_name': username, 'new_strokes': new_strokes}, to=room, include_self=False)
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=True, port=8080)
+    socketio.run(app, host='0.0.0.0', port=8080, debug=True)
+
